@@ -19,8 +19,6 @@ export default function Home() {
   
 
   return (
-    <Main >
-      {/* Optionally render a loading spinner or other content */}
-    </Main>
+    <Main />      
   );
 }

@@ -28,12 +28,13 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <Main>
+    <Main isSignup>
       <UserForm
       object={credentials}
       setObject={setCredentials}
       buttonText="Sign Up"
       onSubmit={handleSignup}
+      linkText='login'
       />
     </Main>
     

@@ -9,9 +9,10 @@ import { useRouter } from 'next/navigation'; // Use 'next/navigation' for client
 
 type MainProps = {
   children?: React.ReactNode;
+  isSignup?: boolean;
 };
 
-const Main: React.FC<MainProps> = ({ children }) => {
+const Main: React.FC<MainProps> = ({ children,isSignup=false }) => {
   const { user, logout, signup } = useUser();
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
@@ -36,13 +37,26 @@ const Main: React.FC<MainProps> = ({ children }) => {
   }
 
   return (
-    <>
-      <Navbar userName={user?.name} onLogout={logout} onSignUp={signup} />
-      <Box component="main" sx={{ flexGrow: 1, p: 3, bgcolor: 'lightgray' }}>
+    <Box 
+      sx={{
+        bgcolor: 'lightgray',
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh' // Ensure the main content takes up at least the full viewport height
+      }}>
+      <Navbar userName={user?.name} onLogout={logout} onSignUp={signup} isSignup={isSignup} />
+      <Box
+        component="main"
+        sx={{
+          p: 2,
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
         {children}
       </Box>
       <Footer />
-    </>
+    </Box>
   );
 };
 

@@ -31,7 +31,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     fetchUser();
-  }, []);
+  }, [router]);
 
   const logout = () => {
     setUser(null);
