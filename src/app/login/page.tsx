@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/utils/firebaseConfig';
-import { UserForm } from '@kaushik-aditya/projectpackages';
-import { Main } from '@/components';
+import { Main, UserForm } from '@/components';
 
 const Login: React.FC = () => {
   const [credentials, setCredentials] = useState({
@@ -14,6 +13,7 @@ const Login: React.FC = () => {
 
   const handleLogin = async () => {
     try {
+      console.log("gfh");
       await signInWithEmailAndPassword(auth, credentials.Email, credentials.Password);
       alert('Logged in successfully');
     } catch (error: any) {

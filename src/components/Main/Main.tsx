@@ -12,7 +12,7 @@ type MainProps = {
 };
 
 const Main: React.FC<MainProps> = ({ children }) => {
-  const { user, setUser, logout, signup } = useUser();
+  const { user, logout, signup } = useUser();
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
 
@@ -27,7 +27,6 @@ const Main: React.FC<MainProps> = ({ children }) => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          minHeight: '100vh',
           bgcolor: 'background.paper'
         }}
       >

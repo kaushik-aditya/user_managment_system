@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/utils/firebaseConfig';
-import { UserForm } from '@kaushik-aditya/projectpackages';
+import { Main, UserForm } from '@/components';
 
 const Signup: React.FC = () => {
   const [credentials, setCredentials] = useState({
@@ -28,12 +28,15 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <UserForm
+    <Main>
+      <UserForm
       object={credentials}
       setObject={setCredentials}
       buttonText="Sign Up"
       onSubmit={handleSignup}
-    />
+      />
+    </Main>
+    
   );
 };
 
