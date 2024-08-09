@@ -1,23 +1,26 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { collection, DocumentData, getDocs } from 'firebase/firestore';
-import { firestore } from '@/utils/firebaseConfig';
-import { Navbar } from '@kaushik-aditya/projectpackages';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useUser } from '@/context/UserContext';
+import { Main } from '@/components';
 
 export default function Home() {
-  const [user,setUser] = useState<DocumentData[] | null>();
-  useEffect(() => {
-    const fetchUser = async () => {
-      const querySnapshot = await getDocs(collection(firestore, 'User'));
-      const fetchedData = querySnapshot.docs.map(doc => doc.data());
-      setUser(fetchedData);
-    };
+  const { user} = useUser();
+  const router = useRouter();
 
-    fetchUser();
-  }, []);
+  useEffect(() => {
+    if (user) {
+      router.push('/dashboard');
+    } else {
+      router.push('/login');
+    }
+  }, [user, router]);
   
+
   return (
-    <Navbar userName="aditya"/>
+    <Main >
+      {/* Optionally render a loading spinner or other content */}
+    </Main>
   );
 }
