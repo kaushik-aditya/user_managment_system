@@ -1,87 +1,74 @@
-'use client';
+import React from 'react';
+import { Box, TextField } from '@mui/material';
+import Button from '../Button';
 
-import React, { useState, useEffect } from 'react';
-import { collection, getDocs, query, where, doc, deleteDoc, updateDoc } from 'firebase/firestore';
-import { useUser } from '@/context/UserContext';
-import { Main, Modal, UsersTable, UserForm } from '@/components';
-import { firestore } from '@/utils/firebaseConfig';
-import { User } from '@/types/types';
+type DynamicFormProps<T> = {
+  object: T;
+  setObject: React.Dispatch<React.SetStateAction<T>>;
+  buttonText: string;
+  onSubmit: () => void;
+  linkText?: string;
+};
 
-const UserPage: React.FC = () => {
-  const { user } = useUser();
-  const [users, setUsers] = useState<User[]>([]);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        let q;
-        if (user?.role === 'hr') {
-          q = query(collection(firestore, 'users'));
-        } else {
-          q = query(collection(firestore, 'users'), where('role', '==', 'user'));
-        }
-
-        const querySnapshot = await getDocs(q);
-        const usersData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as User[];
-        setUsers(usersData);
-      } catch (error) {
-        console.error('Error fetching users:', error);
-      }
-    };
-
-    if (user) {
-      fetchUsers();
-    }
-  }, [user]);
-
-  const handleEdit = (id: string) => {
-    const userToEdit = users.find(user => user.id === id) || null;
-    setSelectedUser(userToEdit);
-    setModalOpen(true);
-  };
-
-  const handleDelete = async (id: string) => {
-    try {
-      await deleteDoc(doc(firestore, 'users', id));
-      setUsers(prevUsers => prevUsers.filter(user => user.id !== id));
-    } catch (error) {
-      console.error('Error deleting user:', error);
-    }
-  };
-
-  const handleUpdate = async () => {
-    if (selectedUser) {
-      try {
-        const userRef = doc(firestore, 'users', selectedUser.id);
-        await updateDoc(userRef, selectedUser);
-        setUsers(prevUsers => prevUsers.map(user => user.id === selectedUser.id ? selectedUser : user));
-        handleCloseModal();
-      } catch (error) {
-        console.error('Error updating user:', error);
-      }
-    }
-  };
-
-  const handleCloseModal = () => {
-    setModalOpen(false);
-    setSelectedUser(null);
+const DynamicForm = <T extends { [key: string]: string }>({
+  object,
+  setObject,
+  buttonText,
+  onSubmit,
+  linkText,
+}: DynamicFormProps<T>) => {
+  const handleChange = (key: keyof T) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    setObject(prevObject => ({
+      ...prevObject,
+      [key]: event.target.value,
+    }));
   };
 
   return (
-    <Main>
-      <UsersTable users={users} onEdit={handleEdit} onDelete={handleDelete} />
-      <Modal open={modalOpen} onClose={handleCloseModal}>
-        <UserForm
-          object={selectedUser || {}}
-          setObject={setSelectedUser}
-          buttonText="Update"
-          onSubmit={handleUpdate}
+    <Box
+      component="form"
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+        width: '50%',
+        height: '75%',
+        padding: 3,
+        margin: 'auto auto',
+        boxShadow: 3,
+        bgcolor: 'background.paper',
+        position: 'relative',
+        top: '12.5%',
+      }}
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit();
+      }}
+    >
+      {Object.keys(object).map((key) => (
+        <TextField
+          size='small'
+          key={key}
+          label={key}
+          value={object[key] || ''}
+          onChange={handleChange(key as keyof T)}
+          variant="outlined"
+          fullWidth
         />
-      </Modal>
-    </Main>
+      ))}
+      <Button
+        text={buttonText}
+        color='primary'
+        variant='contained'
+        size="small"
+        borderRadius="4px"
+        sx={{ width: '100%' }}
+        onClick={onSubmit}
+      />
+      {linkText && <a style={{ color: 'red' }} href={`/${linkText}`}>{linkText}</a>}
+</Box>
+    
   );
 };
 
-export default UserPage;
+export default DynamicForm;

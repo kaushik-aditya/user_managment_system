@@ -3,15 +3,14 @@ import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBzHEVjbwTPzPOCaYVO81XZz4h2_DbEVA8",
-    authDomain: "saas-a32ce.firebaseapp.com",
-    databaseURL: "https://saas-a32ce-default-rtdb.firebaseio.com",
-    projectId: "saas-a32ce",
-    storageBucket: "saas-a32ce.appspot.com",
-    messagingSenderId: "643777302268",
-    appId: "1:643777302268:web:d18e9bbf4c9a8243255179",
-    measurementId: "G-WVRCGFVE0K"
-};
+    apiKey: "AIzaSyDNKPk6Noo8Dj9bk-MiIrbdZAIZPQLXzKg",
+    authDomain: "umrs-2024.firebaseapp.com",
+    projectId: "umrs-2024",
+    storageBucket: "umrs-2024.appspot.com",
+    messagingSenderId: "221953064870",
+    appId: "1:221953064870:web:a4c812cf7cf3e162c59967",
+    measurementId: "G-0YPV9M1K8V"
+  };
 
 const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
