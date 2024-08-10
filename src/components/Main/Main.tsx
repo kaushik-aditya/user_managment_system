@@ -13,13 +13,17 @@ type MainProps = {
 };
 
 const Main: React.FC<MainProps> = ({ children,isSignup=false }) => {
-  const { user, logout, signup } = useUser();
+  const { user, logout} = useUser();
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     setIsMounted(true); // Ensures that the router is fully mounted
   }, []);
+
+  const signUp = ()=>{
+    router.push('/signup');
+  }
 
   if (!isMounted) {
     return (
@@ -44,7 +48,7 @@ const Main: React.FC<MainProps> = ({ children,isSignup=false }) => {
         flexDirection: 'column',
         minHeight: '100vh' // Ensure the main content takes up at least the full viewport height
       }}>
-      <Navbar userName={user?.name} onLogout={logout} onSignUp={signup} isSignup={isSignup} />
+      <Navbar userName={user?.name} onLogout={logout} isSignup={isSignup} onSignUp={signUp} />
       <Box
         component="main"
         sx={{

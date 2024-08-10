@@ -4,8 +4,12 @@ import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/utils/firebaseConfig';
 import { Main, UserForm } from '@/components';
+import { useRouter } from 'next/navigation';
+import { useUser } from '@/context/UserContext';
 
 const Login: React.FC = () => {
+  const {setUser} = useUser();
+  const router = useRouter();
   const [credentials, setCredentials] = useState({
     Email: '',
     Password: '',
@@ -13,9 +17,9 @@ const Login: React.FC = () => {
 
   const handleLogin = async () => {
     try {
-      console.log("gfh");
-      await signInWithEmailAndPassword(auth, credentials.Email, credentials.Password);
+      await signInWithEmailAndPassword(auth, credentials.Email, credentials.Password);      
       alert('Logged in successfully');
+      router.push('/dashboard');
     } catch (error: any) {
       alert('Error logging in: ' + error.message);
     }

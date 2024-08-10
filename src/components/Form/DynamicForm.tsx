@@ -8,6 +8,7 @@ type DynamicFormProps<T> = {
   buttonText: string;
   onSubmit: () => void;
   linkText?: string;
+  fullWidth?:boolean;
 };
 
 const DynamicForm = <T extends { [key: string]: string }>({
@@ -16,6 +17,7 @@ const DynamicForm = <T extends { [key: string]: string }>({
   buttonText,
   onSubmit,
   linkText,
+  fullWidth=false,
 }: DynamicFormProps<T>) => {
   const handleChange = (key: keyof T) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setObject(prevObject => ({
@@ -31,10 +33,9 @@ const DynamicForm = <T extends { [key: string]: string }>({
         display: 'flex',
         flexDirection: 'column',
         gap: 2,
-        width: '50%',
-        height: '75%',
+        width: fullWidth? '100%':"50%",
         padding: 3,
-        margin: 'auto auto',
+        margin: '0 auto',
         boxShadow: 3,
         bgcolor: 'background.paper',
         position: 'relative',
@@ -46,7 +47,7 @@ const DynamicForm = <T extends { [key: string]: string }>({
       }}
     >
       {Object.keys(object).map((key) => (
-        <TextField
+        (key!=='id') && (<TextField
           size='small'
           key={key}
           label={key}
@@ -54,7 +55,7 @@ const DynamicForm = <T extends { [key: string]: string }>({
           onChange={handleChange(key as keyof T)}
           variant="outlined"
           fullWidth
-        />
+        />)
       ))}
       <Button
         text={buttonText}
