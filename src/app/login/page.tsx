@@ -3,12 +3,11 @@
 import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/utils/firebaseConfig';
-import { Main, UserForm } from '@/components';
+import { Main } from '@/components';
 import { useRouter } from 'next/navigation';
-import { useUser } from '@/context/UserContext';
+import { UserForm } from '@kaushik-aditya/projectpackages';
 
 const Login: React.FC = () => {
-  const {setUser} = useUser();
   const router = useRouter();
   const [credentials, setCredentials] = useState({
     Email: '',

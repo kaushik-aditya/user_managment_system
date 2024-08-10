@@ -3,12 +3,13 @@
 import { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, firestore } from '@/utils/firebaseConfig';
-import { Main, UserForm } from '@/components';
+import { Main } from '@/components';
 import { doc, setDoc } from 'firebase/firestore';
+import { UserForm } from '@kaushik-aditya/projectpackages';
 
 const Signup: React.FC = () => {
   const [credentials, setCredentials] = useState({
-    Role: '',
+    Role: 'HR',
     Name: '',
     Email: '',
     Password: '',

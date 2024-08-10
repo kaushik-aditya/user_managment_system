@@ -3,20 +3,21 @@
 import React, { useEffect, useState } from 'react';
 import { collection, getDocs, query, where, doc, deleteDoc, updateDoc, addDoc } from 'firebase/firestore';
 import { useUser } from '@/context/UserContext';
-import { Main, Modal, UserForm, UsersTable, Button } from '@/components';
+import { Main } from '@/components';
+import { Typography } from '@mui/material';
 
 import { firestore } from '@/utils/firebaseConfig';
 import { User } from '@/types/types';
+import { Modal, UserForm, UsersTable } from '@kaushik-aditya/projectpackages';
 
 const UserPage: React.FC = () => {
-  const { user } = useUser();
+  const { user ,isUsersList , isAddModalOpen, setIsAddModalOpen} = useUser();
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
-  const [addModalOpen, setAddModalOpen] = useState<boolean>(false);
 
   const [newUser, setNewUser] = useState({
-    Role: '',
+    Role: 'USER',
     Name: '',
     Email: ''
   });
@@ -52,18 +53,28 @@ const UserPage: React.FC = () => {
     setEditModalOpen(true);
   };
 
-  const handleAdd = () => {
-    setAddModalOpen(true);
-  };
+ 
 
   const handleAddUser = async () => {
     try {
       if (newUser) {
-        await addDoc(collection(firestore, 'User'), {
+        const docRef = await addDoc(collection(firestore, 'User'), {
           email: newUser.Email,
           role: newUser.Role,
           name: newUser.Name,
         });
+  
+        // After successfully adding the user, update the users state
+        setUsers(prevUsers => [
+          ...prevUsers,
+          {
+            id: docRef.id, // Use the newly generated ID from Firestore
+            email: newUser.Email,
+            role: newUser.Role,
+            name: newUser.Name,
+          } as User
+        ]);
+  
         handleCloseAddModal();
         alert('User Registered Successfully!');
       }
@@ -71,6 +82,7 @@ const UserPage: React.FC = () => {
       alert(error.message);
     }
   };
+  
 
   const handleDelete = async (id: string) => {
     try {
@@ -100,7 +112,7 @@ const UserPage: React.FC = () => {
   };
 
   const handleCloseAddModal = () => {
-    setAddModalOpen(false);
+    setIsAddModalOpen(false);
     setNewUser({
       Role: '',
       Name: '',
@@ -110,28 +122,53 @@ const UserPage: React.FC = () => {
 
   return (
     <Main>
-      {user?.name !== "Guest" && user?.role === "hr" && (
-        <Button color="secondary" variant="contained" size="medium" text="Add User" borderRadius="20px" onClick={handleAdd} />
-      )}
-      <UsersTable users={users} onEdit={handleEdit} onDelete={handleDelete} />
-      <Modal open={editModalOpen} onClose={handleCloseEditModal}>
-        <UserForm
-          object={selectedUser || {}}
-          setObject={setSelectedUser as any}
-          buttonText="Update"
-          onSubmit={handleUpdate}
-          fullWidth
-        />
-      </Modal>
-      <Modal open={addModalOpen} onClose={handleCloseAddModal}>
-        <UserForm
-          object={newUser || {}}
-          setObject={setNewUser as any}
-          buttonText="Add User"
-          onSubmit={handleAddUser}
-          fullWidth
-        />
-      </Modal>
+      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+        {!isUsersList && (<div style={{ 
+          display: 'flex', 
+          flexDirection: 'column', // Stack text vertically
+          alignItems: 'center',    // Center items horizontally
+          justifyContent: 'center', // Center items vertically
+          textAlign: 'center'       // Center text alignment
+        }}>
+          <Typography 
+            variant="h4" // Larger text
+            sx={{ 
+              marginBottom: '10px', // Space between texts
+              fontWeight: 'bold'     // Optional: Make text bold
+            }}
+          >
+            Welcome to Your Portal!
+          </Typography>
+          <Typography 
+            variant="h6" // Smaller text
+            sx={{ 
+              fontWeight: 'normal' // Optional: Default font weight
+            }}
+          >
+            You're in the right place. Explore services with ease!
+          </Typography>
+        </div>)}
+        
+        {isUsersList && (<UsersTable users={users} onEdit={handleEdit} onDelete={handleDelete} />)}
+        <Modal open={editModalOpen} onClose={handleCloseEditModal}>
+          <UserForm
+            object={selectedUser || {}}
+            setObject={setSelectedUser as any}
+            buttonText="Update"
+            onSubmit={handleUpdate}
+            fullWidth
+          />
+        </Modal>
+        <Modal open={isAddModalOpen} onClose={handleCloseAddModal}>
+          <UserForm
+            object={newUser || {}}
+            setObject={setNewUser as any}
+            buttonText="Add User"
+            onSubmit={handleAddUser}
+            fullWidth
+          />
+        </Modal>
+      </div>
     </Main>
   );
 };

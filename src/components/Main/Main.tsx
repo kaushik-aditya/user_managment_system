@@ -59,7 +59,7 @@ const Main: React.FC<MainProps> = ({ children,isSignup=false }) => {
       >
         {children}
       </Box>
-      <Footer />
+      <Footer name="USM"/>
     </Box>
   );
 };

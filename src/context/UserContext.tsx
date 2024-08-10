@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { signOut, onAuthStateChanged } from 'firebase/auth';
@@ -11,12 +11,18 @@ type UserContextType = {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
   logout: () => void;
+  isUsersList: boolean;
+  setIsUsersList: React.Dispatch<React.SetStateAction<boolean>>;
+  isAddModalOpen: boolean;
+  setIsAddModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isUsersList, setIsUsersList] = useState<boolean>(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -25,11 +31,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const docRef = doc(firestore, "User", authUser.uid);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          setUser(docSnap.data() as User); // Make sure to cast data to User type if needed
-          console.log(docSnap.data());
+          setUser(docSnap.data() as User);
         } else {
           console.log("No user data found");
-          setUser(null); // Handle case where user exists but no data is found
+          setUser(null);
         }
       } else {
         setUser(null);
@@ -55,7 +60,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <UserContext.Provider value={{ user, setUser, logout }}>
+    <UserContext.Provider value={{ user, setUser, logout, isUsersList, setIsUsersList ,isAddModalOpen,setIsAddModalOpen }}>
       {children}
     </UserContext.Provider>
   );
