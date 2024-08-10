@@ -26,7 +26,7 @@ const UserPage: React.FC = () => {
     const fetchUsers = async () => {
       try {
         let q;
-        q = query(collection(firestore, 'User'));
+        q = query(collection(firestore, 'User'),where('role', '==', 'USER'));
         
         const querySnapshot = await getDocs(q);
         const usersData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as User[];
