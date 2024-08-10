@@ -1,16 +1,16 @@
-"use client"; // Ensure this file is client-side
+"use client";
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
-import { firestore } from '@/utils/firebaseConfig';
+import { signOut, onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { auth, firestore } from '@/utils/firebaseConfig';
 import { User } from '@/types/types';
-import { useRouter } from 'next/navigation'; // Use 'next/navigation' for client-side
+import { useRouter } from 'next/navigation';
 
 type UserContextType = {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
   logout: () => void;
-  signup: () => void;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -20,31 +20,42 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const router = useRouter();
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(firestore, 'User'));
-        const fetchedData = querySnapshot.docs.map(doc => doc.data())[0] as User;
-        setUser(fetchedData || null);
-      } catch (error) {
-        console.error("Error fetching user:", error);
+    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+      if (authUser) {
+        const docRef = doc(firestore, "User", authUser.uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setUser(docSnap.data() as User); // Make sure to cast data to User type if needed
+          console.log(docSnap.data());
+        } else {
+          console.log("No user data found");
+          setUser(null); // Handle case where user exists but no data is found
+        }
+      } else {
+        setUser(null);
       }
-    };
+    });
 
-    fetchUser();
+    return () => unsubscribe();
   }, []);
 
-  const logout = () => {
-    setUser(null);
-    router.push('/login');
-  };
+  useEffect(() => {
+    if (user) {
+      router.push('/dashboard');
+    } else {
+      router.push('/login');
+    }
+  }, [user, router]);
 
-  const signup = () => {
-    setUser(null);
-    router.push('/signup');
+  const logout = () => {
+    signOut(auth).then(() => {
+      setUser(null);
+      router.push('/login');
+    });
   };
 
   return (
-    <UserContext.Provider value={{ user, setUser, logout, signup }}>
+    <UserContext.Provider value={{ user, setUser, logout }}>
       {children}
     </UserContext.Provider>
   );
