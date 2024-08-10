@@ -26,14 +26,8 @@ const UserPage: React.FC = () => {
     const fetchUsers = async () => {
       try {
         let q;
-        if (user?.role === 'hr') {
-          // Fetch all users if the role is HR
-          q = query(collection(firestore, 'User'));
-        } else {
-          // Fetch only the users with 'user' role for non-HR roles
-          q = query(collection(firestore, 'User'), where('role', '==', 'user'));
-        }
-
+        q = query(collection(firestore, 'User'));
+        
         const querySnapshot = await getDocs(q);
         const usersData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as User[];
         setUsers(usersData);

@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { Box, CircularProgress } from "@mui/material";
 import Navbar from "../Navbar";
-import Footer from "../Footer";
 import { useUser } from "@/context/UserContext";
 import { useRouter } from 'next/navigation'; // Use 'next/navigation' for client-side
+import { Footer } from "@kaushik-aditya/projectpackages";
 
 type MainProps = {
   children?: React.ReactNode;
